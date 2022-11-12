@@ -28,8 +28,14 @@ func main() {
 
 	handler.InitRoutes(e, dbPool)
 
-	err = e.Start(":" + os.Getenv("SERVER_PORT"))
+	port := os.Getenv("SERVER_PORT")
+	if os.Getenv("IS_HTTPS") == "true" {
+		err = e.StartTLS(":"+port, os.Getenv("CERT_PEM_FILE"), os.Getenv("KEY_PEM"))
+	} else {
+		err = e.Start(":" + port)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }

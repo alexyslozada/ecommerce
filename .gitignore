@@ -15,6 +15,10 @@ ecommerce
 
 # Environments
 .env
+.env.develop
+
+# Certificates
+*.crt
 
 # Test binary, built with `go test -c`
 *.test

@@ -47,6 +47,10 @@ func newDBConnection() (*pgxpool.Pool, error) {
 	}
 
 	connString := makeURL(user, pass, host, port, dbName, sslMode, min, max)
+	if os.Getenv("DB_SSL_MODE") == "require" {
+		connString += " sslrootcert=" + os.Getenv("DB_SSL_ROOT_CERT")
+	}
+
 	config, err := pgxpool.ParseConfig(connString)
 	if err != nil {
 		return nil, fmt.Errorf("%s %w", "pgxpool.ParseConfig()", err)
