@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const AppName = "EDcommerce"

@@ -1,11 +1,12 @@
 package response
 
 import (
+	"net/http"
+
 	"github.com/alexyslozada/ecommerce/model"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"net/http"
 )
 
 const (

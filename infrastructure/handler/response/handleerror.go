@@ -1,9 +1,10 @@
 package response
 
 import (
+	"net/http"
+
 	"github.com/alexyslozada/ecommerce/model"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 func HTTPErrorHandler(err error, c echo.Context) {

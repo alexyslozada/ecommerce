@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 

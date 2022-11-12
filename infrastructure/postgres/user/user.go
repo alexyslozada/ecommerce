@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"database/sql"
+
 	"github.com/alexyslozada/ecommerce/infrastructure/postgres"
 	"github.com/google/uuid"
 

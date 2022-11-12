@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/alexyslozada/ecommerce/infrastructure/handler"
-	"github.com/alexyslozada/ecommerce/infrastructure/handler/response"
 	"log"
 	"os"
+
+	"github.com/alexyslozada/ecommerce/infrastructure/handler"
+	"github.com/alexyslozada/ecommerce/infrastructure/handler/response"
 )
 
 func main() {
