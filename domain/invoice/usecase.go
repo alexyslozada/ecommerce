@@ -12,12 +12,13 @@ import (
 
 // Invoice implements UseCase
 type Invoice struct {
-	storage Storage
+	storage                    Storage
+	storageInvoiceDetailReport StorageInvoiceDetailReport
 }
 
 // New returns a new Invoice
-func New(s Storage) Invoice {
-	return Invoice{storage: s}
+func New(s Storage, sidr StorageInvoiceDetailReport) Invoice {
+	return Invoice{storage: s, storageInvoiceDetailReport: sidr}
 }
 
 // Create creates a model.Invoice
@@ -37,6 +38,47 @@ func (i Invoice) Create(po *model.PurchaseOrder) error {
 	}
 
 	return nil
+}
+
+func (i Invoice) GetByUserID(userID uuid.UUID) (model.InvoicesReport, error) {
+	invoicesHead, err := i.storageInvoiceDetailReport.HeadsByUserID(userID)
+	if err != nil {
+		return nil, fmt.Errorf("invoice: %w", err)
+	}
+
+	var invoicesReport model.InvoicesReport
+	for _, invoiceHead := range invoicesHead {
+		invoiceDetails, err := i.storageInvoiceDetailReport.AllDetailsByInvoiceID(invoiceHead.Invoice.ID)
+		if err != nil {
+			return nil, fmt.Errorf("%s %w", "storageInvoiceDetail.AllDetailsByInvoiceID()", err)
+		}
+
+		invoiceHead.InvoiceDetailsReport = invoiceDetails
+		invoicesReport = append(invoicesReport, invoiceHead)
+	}
+
+	return invoicesReport, nil
+}
+
+// GetAll returns a model.Invoices according to filters and sorts
+func (i Invoice) GetAll() (model.InvoicesReport, error) {
+	invoices, err := i.storageInvoiceDetailReport.AllHead()
+	if err != nil {
+		return nil, fmt.Errorf("invoice: %w", err)
+	}
+
+	var invoicesReport model.InvoicesReport
+	for _, v := range invoices {
+		invoiceDetails, err := i.storageInvoiceDetailReport.AllDetailsByInvoiceID(v.Invoice.ID)
+		if err != nil {
+			return nil, fmt.Errorf("%s %w", "storageInvoiceDetailReport.AllDetailsByInvoiceID()", err)
+		}
+
+		v.InvoiceDetailsReport = invoiceDetails
+		invoicesReport = append(invoicesReport, v)
+	}
+
+	return invoicesReport, nil
 }
 
 func invoiceFromPurchaseOrder(po *model.PurchaseOrder) (model.Invoice, model.InvoiceDetails, error) {

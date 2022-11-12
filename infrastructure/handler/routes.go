@@ -1,13 +1,15 @@
 package handler
 
 import (
-	"github.com/alexyslozada/ecommerce/infrastructure/handler/login"
 	"net/http"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 
+	"github.com/alexyslozada/ecommerce/infrastructure/handler/invoice"
+	"github.com/alexyslozada/ecommerce/infrastructure/handler/login"
+	"github.com/alexyslozada/ecommerce/infrastructure/handler/paypal"
 	"github.com/alexyslozada/ecommerce/infrastructure/handler/product"
 	"github.com/alexyslozada/ecommerce/infrastructure/handler/purchaseorder"
 	"github.com/alexyslozada/ecommerce/infrastructure/handler/user"
@@ -20,10 +22,14 @@ func InitRoutes(e *echo.Echo, dbPool *pgxpool.Pool) {
 	// B
 	// C
 
+	// I
+	invoice.NewRouter(e, dbPool)
+
 	// L
 	login.NewRouter(e, dbPool)
 
 	// P
+	paypal.NewRouter(e, dbPool)
 	product.NewRouter(e, dbPool)
 	purchaseorder.NewRouter(e, dbPool)
 

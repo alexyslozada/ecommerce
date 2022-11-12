@@ -2,6 +2,7 @@ package purchaseorder
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/alexyslozada/ecommerce/model"
 	"github.com/google/uuid"
@@ -29,6 +30,7 @@ func (p PurchaseOrder) Create(m *model.PurchaseOrder) error {
 	}
 
 	m.ID = ID
+	m.CreatedAt = time.Now().Unix()
 
 	err = p.storage.Create(m)
 	if err != nil {
