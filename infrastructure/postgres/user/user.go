@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"database/sql"
+	"github.com/alexyslozada/ecommerce/infrastructure/postgres"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -10,9 +11,21 @@ import (
 	"github.com/alexyslozada/ecommerce/model"
 )
 
+const table = "users"
+
+var fields = []string{
+	"id",
+	"email",
+	"password",
+	"is_admin",
+	"details",
+	"created_at",
+	"updated_at",
+}
+
 var (
-	psqlInsert = "INSERT INTO users (id, email, password, details, created_at) VALUES ($1, $2, $3, $4, $5)"
-	psqlGetAll = "SELECT id, email, password, details, created_at, updated_at FROM users"
+	psqlInsert = postgres.BuildSQLInsert(table, fields)
+	psqlGetAll = postgres.BuildSQLSelect(table, fields)
 )
 
 type User struct {
@@ -35,6 +48,7 @@ func (u User) Create(m *model.User) error {
 		m.IsAdmin,
 		m.Details,
 		m.CreatedAt,
+		postgres.Int64ToNull(m.UpdatedAt),
 	)
 	if err != nil {
 		return err
@@ -51,7 +65,7 @@ func (u User) GetByEmail(email string) (model.User, error) {
 		email,
 	)
 
-	return u.scanRow(row)
+	return u.scanRow(row, true)
 }
 
 // GetAll gets all model.Users with Fields
@@ -67,7 +81,7 @@ func (u User) GetAll() (model.Users, error) {
 
 	ms := model.Users{}
 	for rows.Next() {
-		m, err := u.scanRow(rows)
+		m, err := u.scanRow(rows, false)
 		if err != nil {
 			return nil, err
 		}
@@ -78,7 +92,7 @@ func (u User) GetAll() (model.Users, error) {
 	return ms, nil
 }
 
-func (u User) scanRow(s pgx.Row) (model.User, error) {
+func (u User) scanRow(s pgx.Row, withPassword bool) (model.User, error) {
 	m := model.User{}
 
 	updatedAtNull := sql.NullInt64{}
@@ -97,6 +111,10 @@ func (u User) scanRow(s pgx.Row) (model.User, error) {
 	}
 
 	m.UpdatedAt = updatedAtNull.Int64
+
+	if !withPassword {
+		m.Password = ""
+	}
 
 	return m, nil
 }
