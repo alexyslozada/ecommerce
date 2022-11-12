@@ -1,0 +1,13 @@
+[Unit]
+Description=Api del bootcamp de go
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/projects/ecommerce
+ExecStart=/var/projects/ecommerce/ecommerce
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
